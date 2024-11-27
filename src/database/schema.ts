@@ -1,14 +1,14 @@
 import {pgTable, serial, text, timestamp, varchar} from "drizzle-orm/pg-core";
-import {InferModel} from "drizzle-orm";
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
-  email: text('email').notNull().unique(),
-  name: text('name').notNull(),
-  passwordHash: text('password_hash').notNull(),
+  email: varchar('email', { length: 50 }).notNull().unique(),
+  name: varchar('name', { length: 50 }).notNull(),
+  password: varchar('password', { length: 255 }).notNull(),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
+export type User = typeof users.$inferSelect;
 
 export const tickets = pgTable('tickets', {
   id: serial('id').primaryKey(),
@@ -25,8 +25,7 @@ export const tickets = pgTable('tickets', {
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
-export type SelectTicket = typeof tickets.$inferSelect;
-export type InsertTicket = typeof tickets.$inferInsert;
+export type Ticket = typeof tickets.$inferSelect;
 
 export const ticketComments = pgTable('ticket_comments', {
   id: serial('id').primaryKey(),
