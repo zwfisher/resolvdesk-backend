@@ -1,4 +1,4 @@
-import {BadRequestException, Injectable, NotFoundException, UnauthorizedException} from "@nestjs/common";
+import {BadRequestException, Injectable, UnauthorizedException} from "@nestjs/common";
 import {UsersService} from "../users/users.service";
 import * as bcrypt from 'bcrypt';
 import {RegisterDto} from "./dto/register.dto";
@@ -31,27 +31,19 @@ export class AuthService {
     return createdUser;
   }
 
-  async login(user: any): Promise<JWT> {
-    const payload = { username: user.username, sub: user.userId };
+  public async login(user: any): Promise<JWT> {
+    const payload = {username: user.username, sub: user.userId};
     return {
       access_token: this.jwtService.sign(payload),
     };
   }
 
   public async validateUser(email: string, password: string): Promise<User> {
-    try {
-      const user = await this.userService.getUserByEmail(email);
-      await this.verifyPassword(password, user.password);
-      return user;
-    } catch (error) {
+    const user = await this.userService.getUserByEmail(email);
+    const passwordsMatch = await bcrypt.compare(password, user.password);
+    if (!passwordsMatch) {
       throw new UnauthorizedException();
     }
-  }
-
-  private async verifyPassword(password: string, hashedPassword: string): Promise<void> {
-    const passwordsMatch = await bcrypt.compare(password, hashedPassword);
-    if (!passwordsMatch) {
-      throw new BadRequestException("Wrong email or password");
-    }
+    return user;
   }
 }

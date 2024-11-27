@@ -10,7 +10,6 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  @HttpCode(HttpStatus.OK)
   @Public()
   register(@Body() registerDto: RegisterDto): Promise<User> {
     return this.authService.register(registerDto);
