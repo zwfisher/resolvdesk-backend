@@ -1,13 +1,20 @@
-import {BadRequestException, Injectable, NotFoundException} from "@nestjs/common";
+import {BadRequestException, Injectable, NotFoundException, UnauthorizedException} from "@nestjs/common";
 import {UsersService} from "../users/users.service";
 import * as bcrypt from 'bcrypt';
 import {RegisterDto} from "./dto/register.dto";
 import {User} from "../database/schema";
+import {JwtService} from "@nestjs/jwt";
+
+export interface JWT {
+  access_token: string;
+}
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UsersService) {
-  }
+  constructor(
+    private readonly userService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   public async register(registrationData: RegisterDto): Promise<User> {
     const existingUser: User = await this.userService.getUserByEmail(registrationData.email);
@@ -24,14 +31,20 @@ export class AuthService {
     return createdUser;
   }
 
-  public async login(email: string, password: string): Promise<User> {
+  async login(user: any): Promise<JWT> {
+    const payload = { username: user.username, sub: user.userId };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
+  }
+
+  public async validateUser(email: string, password: string): Promise<User> {
     try {
       const user = await this.userService.getUserByEmail(email);
       await this.verifyPassword(password, user.password);
-      user.password = undefined;
       return user;
     } catch (error) {
-      throw new BadRequestException("Wrong email or password");
+      throw new UnauthorizedException();
     }
   }
 
