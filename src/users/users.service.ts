@@ -7,7 +7,7 @@ import {User} from "../database/schema";
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  getUserByEmail(email: string): Promise<User> {
+  getUserByEmail(email: string): Promise<any> {
     return this.usersRepository.getUserByEmail(email);
   }
 

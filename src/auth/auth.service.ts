@@ -1,9 +1,13 @@
-import {BadRequestException, Injectable, UnauthorizedException} from "@nestjs/common";
-import {UsersService} from "../users/users.service";
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
-import {RegisterDto} from "./dto/register.dto";
-import {User} from "../database/schema";
-import {JwtService} from "@nestjs/jwt";
+import { RegisterDto } from './dto/register.dto';
+import { User } from '../database/schema';
+import { JwtService } from '@nestjs/jwt';
 
 export interface JWT {
   access_token: string;
@@ -17,9 +21,11 @@ export class AuthService {
   ) {}
 
   public async register(registrationData: RegisterDto): Promise<User> {
-    const existingUser: User = await this.userService.getUserByEmail(registrationData.email);
+    const existingUser: User = await this.userService.getUserByEmail(
+      registrationData.email,
+    );
     if (existingUser) {
-      throw new BadRequestException("User already exists");
+      throw new BadRequestException('User already exists');
     }
 
     const hashedPassword = await bcrypt.hash(registrationData.password, 10);
@@ -31,15 +37,18 @@ export class AuthService {
     return createdUser;
   }
 
-  public async login(user: any): Promise<JWT> {
-    const payload = {username: user.username, sub: user.userId};
+  public async login(user: User): Promise<JWT> {
+    const payload = { sub: user.id, email: user.email };
     return {
       access_token: this.jwtService.sign(payload),
     };
   }
 
   public async validateUser(email: string, password: string): Promise<User> {
-    const user = await this.userService.getUserByEmail(email);
+    const user: User = await this.userService.getUserByEmail(email);
+    if (!user) {
+      throw new UnauthorizedException();
+    }
     const passwordsMatch = await bcrypt.compare(password, user.password);
     if (!passwordsMatch) {
       throw new UnauthorizedException();

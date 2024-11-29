@@ -1,9 +1,17 @@
-import {Request, Controller, HttpCode, HttpStatus, Post, UseGuards, Body} from "@nestjs/common";
-import {AuthService, JWT} from "./auth.service";
-import {LocalAuthGuard} from "./guard/local-auth.guard";
-import {Public} from "./public.decorator";
-import {RegisterDto} from "./dto/register.dto";
-import {User} from "../database/schema";
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import { AuthService, JWT } from './auth.service';
+import { LocalAuthGuard } from './guard/local-auth.guard';
+import { Public } from './public.decorator';
+import { RegisterDto } from './dto/register.dto';
+import { User } from '../database/schema';
 
 @Controller('auth')
 export class AuthController {
@@ -19,6 +27,6 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   logIn(@Request() req): Promise<JWT> {
-    return this.authService.login(req.user);
+    return this.authService.login(req.user as User);
   }
 }

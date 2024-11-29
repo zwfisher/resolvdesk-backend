@@ -19,11 +19,7 @@ export class UsersRepository {
       .select()
       .from(users)
       .where(eq(users.email, email));
-    const user = results.pop();
-    if (!user) {
-      throw new NotFoundException("User not found");
-    }
-    return user;
+    return results.pop();
   }
 
   async createUser(user: CreateUserDto): Promise<User> {
