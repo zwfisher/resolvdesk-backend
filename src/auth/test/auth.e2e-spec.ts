@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { AppModule } from '../../app.module';
 import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
 
-describe('AppController (e2e)', () => {
+describe('Auth', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -15,7 +15,7 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/health (GET)', () => {
-    return request(app.getHttpServer()).get('/health').expect(200).expect('OK');
+  it('should be able to login', () => {
+    return request(app.getHttpServer()).get('/login').expect(200).expect('OK');
   });
 });

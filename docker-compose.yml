@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:17
     restart: always
     env_file:
       - .env
@@ -9,6 +9,14 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+  test-db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: resolvdesk-test
+    ports:
+      - "5432:5432"
 
   redis:
     image: redis:latest
