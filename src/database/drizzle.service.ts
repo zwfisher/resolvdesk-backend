@@ -15,9 +15,11 @@ export class DrizzleService {
   async cleanup() {
     if (process.env.NODE_ENV === 'production') return;
     return Promise.all(
-      Reflect.ownKeys(databaseSchema).map(async (key) => {
-        return this.db.delete(databaseSchema[key]).execute();
-      }),
+      Reflect.ownKeys(databaseSchema)
+        .filter((key) => key[0] !== '_')
+        .map(async (key) => {
+          return this.db.delete(databaseSchema[key]);
+        }),
     );
   }
 }

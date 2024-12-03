@@ -14,7 +14,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: resolvdesk-test
+      POSTGRES_DB: resolvdesk_test
     ports:
       - "5432:5432"
 

@@ -4,10 +4,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { User } from '../database/schema';
 import { JwtService } from '@nestjs/jwt';
+import { compare, hash } from 'bcrypt';
 
 export interface JWT {
   access_token: string;
@@ -28,7 +28,7 @@ export class AuthService {
       throw new BadRequestException('User already exists');
     }
 
-    const hashedPassword = await bcrypt.hash(registrationData.password, 10);
+    const hashedPassword = await hash(registrationData.password, 10);
     const createdUser = await this.userService.createUser({
       ...registrationData,
       password: hashedPassword,
@@ -49,7 +49,7 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException();
     }
-    const passwordsMatch = await bcrypt.compare(password, user.password);
+    const passwordsMatch = await compare(password, user.password);
     if (!passwordsMatch) {
       throw new UnauthorizedException();
     }

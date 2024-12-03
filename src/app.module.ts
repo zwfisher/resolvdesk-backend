@@ -4,6 +4,9 @@ import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
+import { AuthModule } from './auth/auth.module';
+import { TicketsModule } from './tickets/tickets.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -16,6 +19,7 @@ import * as Joi from 'joi';
         DB_USER: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
+        DB_SSL: Joi.boolean().required(),
         JWT_SECRET: Joi.string().required(),
         JWT_EXPIRATION_TIME: Joi.string().required(),
         REDIS_HOST: Joi.string().required(),
@@ -33,8 +37,12 @@ import * as Joi from 'joi';
         user: configService.get('DB_USER'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
+        ssl: configService.get('DB_SSL'),
       }),
     }),
+    AuthModule,
+    TicketsModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
