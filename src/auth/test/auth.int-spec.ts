@@ -81,6 +81,10 @@ describe('AuthService Int', () => {
     });
 
     it('should return the user if user exists and passwords match', async () => {
+      const mockDate = new Date('2024-01-01T00:00:00.000Z');
+      jest
+        .spyOn(global, 'Date')
+        .mockImplementation(() => mockDate as unknown as Date);
       await authService.register(registerDto);
       const validatedUser: User = await authService.validateUser(
         'johndoe@gmail.com',
@@ -88,8 +92,8 @@ describe('AuthService Int', () => {
       );
       expect(validatedUser.email).toEqual('johndoe@gmail.com');
       expect(validatedUser.name).toEqual('John Doe');
-      expect(validatedUser.createdAt).toBeInstanceOf(Date);
-      expect(validatedUser.updatedAt).toBeInstanceOf(Date);
+      expect(validatedUser.createdAt).toEqual(mockDate);
+      expect(validatedUser.updatedAt).toEqual(mockDate);
     });
   });
 });

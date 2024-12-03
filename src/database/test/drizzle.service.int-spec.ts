@@ -27,6 +27,8 @@ describe('DrizzleService', () => {
           email: 'uniqueuser@gmail.com',
           name: 'Unique User',
           password: 'hashed',
+          createdAt: new Date(),
+          updatedAt: new Date(),
         })
         .returning();
       expect(inserted).toHaveLength(1);
